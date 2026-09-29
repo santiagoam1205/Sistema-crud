@@ -132,4 +132,111 @@ public class EmpleadoControlador {
                 salarioBase
         );
     }
+    public String agregarEmpleado(
+            String cedula,
+            String nombre,
+            String salario,
+            String tipo,
+            String bonificacion) {
+
+        String error = validar(
+                cedula,
+                nombre,
+                salario,
+                tipo,
+                bonificacion
+        );
+
+        if (error != null) {
+            return error;
+        }
+
+        EmpleadoBase empleado = construirEmpleado(
+                cedula,
+                nombre,
+                salario,
+                tipo,
+                bonificacion
+        );
+
+        if (!repositorio.agregar(empleado)) {
+            return "Ya existe un empleado con esa cédula.";
+        }
+
+        historial.add(
+                "AGREGADO: " + cedula + " - " + nombre
+        );
+
+        return null;
+    }
+
+    public EmpleadoBase buscarEmpleado(String cedula) {
+
+        EmpleadoBase empleado = repositorio.buscar(cedula);
+
+        historial.add(
+                "BÚSQUEDA: " + cedula
+        );
+
+        return empleado;
+    }
+
+    public String actualizarEmpleado(
+            String cedula,
+            String nombre,
+            String salario,
+            String tipo,
+            String bonificacion) {
+
+        String error = validar(
+                cedula,
+                nombre,
+                salario,
+                tipo,
+                bonificacion
+        );
+
+        if (error != null) {
+            return error;
+        }
+
+        EmpleadoBase empleado = construirEmpleado(
+                cedula,
+                nombre,
+                salario,
+                tipo,
+                bonificacion
+        );
+
+        if (!repositorio.actualizar(empleado)) {
+            return "No existe un empleado con esa cédula.";
+        }
+
+        historial.add(
+                "ACTUALIZADO: " + cedula + " - " + nombre
+        );
+
+        return null;
+    }
+
+    public String eliminarEmpleado(String cedula) {
+
+        if (!repositorio.eliminar(cedula)) {
+            return "No existe un empleado con esa cédula.";
+        }
+
+        historial.add(
+                "ELIMINADO: " + cedula
+        );
+
+        return null;
+    }
+
+    public ArrayList<EmpleadoBase> listarEmpleados() {
+        return repositorio.listarTodos();
+    }
+
+    public ArrayList<String> obtenerHistorial() {
+        return new ArrayList<>(historial);
+    }
 }
