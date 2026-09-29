@@ -1,10 +1,11 @@
 package vista;
 
+import modelo.EmpleadoComercial;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.ArrayList;
-
+import modelo.EmpleadoComercial;
 import controlador.EmpleadoControlador;
 import modelo.EmpleadoBase;
 
@@ -94,7 +95,7 @@ public class VentanaEmpleados extends JFrame {
         formulario.add(new JLabel("Tipo:"));
         formulario.add(cbTipo);
 
-        formulario.add(new JLabel("Bonificación:"));
+        formulario.add(new JLabel("Bonificación / Comisión %:"));
         formulario.add(txtBonificacion);
 
         JPanel botones = new JPanel();
@@ -118,6 +119,22 @@ public class VentanaEmpleados extends JFrame {
     }
 
     private void configurarEventos() {
+
+        cbTipo.addActionListener(e -> {
+
+            String tipo =
+                    (String) cbTipo.getSelectedItem();
+
+            boolean necesitaValor =
+                    tipo.equals("Administrativo")
+                            || tipo.equals("Comercial");
+
+            txtBonificacion.setEnabled(necesitaValor);
+
+            if (!necesitaValor) {
+                txtBonificacion.setText("");
+            }
+        });
 
         btnAgregar.addActionListener(e -> {
 
@@ -179,7 +196,14 @@ public class VentanaEmpleados extends JFrame {
                                 administrativo.getBonificacion()
                         )
                 );
-            } else {
+            }else if (empleado instanceof modelo.EmpleadoComercial comercial) {
+
+                txtBonificacion.setText(
+                        String.valueOf(
+                                comercial.getPorcentajeComision()
+                        )
+                );
+            }else {
                 txtBonificacion.setText("");
             }
         });
