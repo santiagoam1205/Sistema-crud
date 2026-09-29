@@ -18,6 +18,7 @@ public class VentanaEmpleados extends JFrame {
 
     private JTable tabla;
     private DefaultTableModel modeloTabla;
+    private JTextArea txtHistorial;
 
     private JButton btnAgregar;
     private JButton btnBuscar;
@@ -38,6 +39,8 @@ public class VentanaEmpleados extends JFrame {
         construirInterfaz();
         configurarEventos();
         cargarTabla();
+        actualizarHistorial();
+        limpiarCampos();
     }
 
     private void inicializarComponentes() {
@@ -69,6 +72,8 @@ public class VentanaEmpleados extends JFrame {
         );
 
         tabla = new JTable(modeloTabla);
+        txtHistorial = new JTextArea();
+        txtHistorial.setEditable(false);
     }
 
     private void construirInterfaz() {
@@ -109,6 +114,19 @@ public class VentanaEmpleados extends JFrame {
 
         add(superior, BorderLayout.NORTH);
         add(new JScrollPane(tabla), BorderLayout.CENTER);
+
+        JPanel panelHistorial = new JPanel(new BorderLayout());
+
+        panelHistorial.setBorder(
+                BorderFactory.createTitledBorder("Historial")
+        );
+
+        panelHistorial.add(
+                new JScrollPane(txtHistorial),
+                BorderLayout.CENTER
+        );
+
+        add(panelHistorial, BorderLayout.SOUTH);
     }
 
     private void configurarEventos() {
@@ -262,6 +280,16 @@ public class VentanaEmpleados extends JFrame {
                     empleado.getSalarioBase(),
                     empleado.calcularSalarioTotal()
             });
+        }
+    }
+
+    private void actualizarHistorial() {
+
+        txtHistorial.setText("");
+
+        for (String registro : controlador.obtenerHistorial()) {
+            txtHistorial.append(registro);
+            txtHistorial.append("\n");
         }
     }
 
