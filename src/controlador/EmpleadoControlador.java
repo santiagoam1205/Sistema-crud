@@ -3,12 +3,14 @@ package controlador;
 import modelo.EmpleadoAdministrativo;
 import modelo.EmpleadoBase;
 import modelo.RepositorioEmpleados;
+import modelo.EmpleadoComercial;
 import java.util.ArrayList;
 
 public class EmpleadoControlador {
     public static final String[] TIPOS_EMPLEADO = {
             "Operativo",
-            "Administrativo"
+            "Administrativo",
+            "Comercial"
     };
 
     private final RepositorioEmpleados repositorio;
@@ -102,6 +104,19 @@ public class EmpleadoControlador {
             return "La bonificación debe ser un número positivo.";
         }
 
+        if (tipo.equals("Comercial")) {
+
+            if (!esNumeroValido(bonificacion)) {
+                return "La comisión debe ser un porcentaje válido.";
+            }
+
+            double porcentaje = Double.parseDouble(bonificacion);
+
+            if (porcentaje > 50) {
+                return "La comisión no puede ser mayor al 50%.";
+            }
+        }
+
         return null;
     }
 
@@ -123,6 +138,18 @@ public class EmpleadoControlador {
                     nombre,
                     salarioBase,
                     bono
+            );
+        }
+        if (tipo.equals("Comercial")) {
+
+            double porcentaje =
+                    Double.parseDouble(bonificacion);
+
+            return new EmpleadoComercial(
+                    cedula,
+                    nombre,
+                    salarioBase,
+                    porcentaje
             );
         }
 
