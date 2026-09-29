@@ -3,6 +3,8 @@ package vista;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.ArrayList;
+
 import controlador.EmpleadoControlador;
 import modelo.EmpleadoBase;
 
@@ -18,13 +20,13 @@ public class VentanaEmpleados extends JFrame {
 
     private JTable tabla;
     private DefaultTableModel modeloTabla;
-    private JTextArea txtHistorial;
 
     private JButton btnAgregar;
     private JButton btnBuscar;
     private JButton btnActualizar;
     private JButton btnEliminar;
     private JButton btnLimpiar;
+    private JButton btnHistorial;
 
     public VentanaEmpleados(EmpleadoControlador controlador) {
 
@@ -39,7 +41,6 @@ public class VentanaEmpleados extends JFrame {
         construirInterfaz();
         configurarEventos();
         cargarTabla();
-        actualizarHistorial();
         limpiarCampos();
     }
 
@@ -59,6 +60,7 @@ public class VentanaEmpleados extends JFrame {
         btnActualizar = new JButton("Actualizar");
         btnEliminar = new JButton("Eliminar");
         btnLimpiar = new JButton("Limpiar");
+        btnHistorial = new JButton("Historial");
 
         modeloTabla = new DefaultTableModel(
                 new Object[]{
@@ -72,8 +74,6 @@ public class VentanaEmpleados extends JFrame {
         );
 
         tabla = new JTable(modeloTabla);
-        txtHistorial = new JTextArea();
-        txtHistorial.setEditable(false);
     }
 
     private void construirInterfaz() {
@@ -104,6 +104,7 @@ public class VentanaEmpleados extends JFrame {
         botones.add(btnActualizar);
         botones.add(btnEliminar);
         botones.add(btnLimpiar);
+        botones.add(btnHistorial);
 
         JPanel superior = new JPanel(
                 new BorderLayout()
@@ -114,19 +115,6 @@ public class VentanaEmpleados extends JFrame {
 
         add(superior, BorderLayout.NORTH);
         add(new JScrollPane(tabla), BorderLayout.CENTER);
-
-        JPanel panelHistorial = new JPanel(new BorderLayout());
-
-        panelHistorial.setBorder(
-                BorderFactory.createTitledBorder("Historial")
-        );
-
-        panelHistorial.add(
-                new JScrollPane(txtHistorial),
-                BorderLayout.CENTER
-        );
-
-        add(panelHistorial, BorderLayout.SOUTH);
     }
 
     private void configurarEventos() {
@@ -254,6 +242,43 @@ public class VentanaEmpleados extends JFrame {
         btnLimpiar.addActionListener(
                 e -> limpiarCampos()
         );
+
+        btnHistorial.addActionListener(
+                e -> mostrarHistorial()
+        );
+    }
+
+    private void mostrarHistorial() {
+
+        ArrayList<String> historial =
+                controlador.obtenerHistorial();
+
+        if (historial.isEmpty()) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Aún no hay operaciones registradas."
+            );
+
+            return;
+        }
+
+        String texto = "";
+
+        for (int i = 0; i < historial.size(); i++) {
+
+            texto += (i + 1)
+                    + ". "
+                    + historial.get(i)
+                    + "\n";
+        }
+
+        JOptionPane.showMessageDialog(
+                this,
+                texto,
+                "Historial de operaciones",
+                JOptionPane.INFORMATION_MESSAGE
+        );
     }
 
     private void limpiarCampos() {
@@ -280,16 +305,6 @@ public class VentanaEmpleados extends JFrame {
                     empleado.getSalarioBase(),
                     empleado.calcularSalarioTotal()
             });
-        }
-    }
-
-    private void actualizarHistorial() {
-
-        txtHistorial.setText("");
-
-        for (String registro : controlador.obtenerHistorial()) {
-            txtHistorial.append(registro);
-            txtHistorial.append("\n");
         }
     }
 
